@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="iadalbert1409">
+    <title>Snake</title>
+    <style>
+        .board td{
+            height: 50px;
+            width: 50px;
+            padding: 0;
+            background-color: yellow;
+        }
+        .board tr:nth-child(odd) td:nth-child(odd) {
+            background-color: blue;
+        }
+        .board tr:nth-child(even) td:nth-child(even) {
+            background-color: blue;
+        }
+        .board td.snake{
+            background-color: red !important;
+        }
+        .board td.treat{
+            background-color: green !important;
+        }
+    </style>
+    <script>
+        document.addEventListener("DOMContentLoaded", (event) => {
+        var board_size = [5, 5];
+        var speed = 2;
+        var position = [3, 3];
+        var snake_body = [[position]];
+        var direction = 1;
+        var score = 0;
+        document.addEventListener('keyup', (key) => {
+            if(key.code == "KeyW" || key.code == "ArrowUp"){
+                direction = 1;
+            }
+            else if(key.code == "KeyD" || key.code == "ArrowRight"){
+                direction = 2;
+            }
+            else if(key.code == "KeyS" || key.code == "ArrowDown"){
+                direction = 3;
+            }
+            else if(key.code == "KeyA" || key.code == "ArrowLeft"){
+                direction = 4;
+            }
+        });
+        function game_ended(){
+            clearInterval(game);
+            console.log("Score: " + score);
+            score = 0;
+        }
+        function change_tile(tile, tile_class){
+            let changing_tile = document.querySelector("#r"+tile[1]).querySelector("#t"+tile[0]);
+            if(tile_class != ""){
+                changing_tile.classList.add(tile_class);
+            }
+            else{
+                changing_tile.classList.remove("snake");
+            }
+        }
+        function move_snake_body(position){
+            for(var i = 0; i <= score; i++){
+                change_tile(snake_body[i], "");
+            }
+            for(var i = 0; i < score; i++){
+                snake_body[i+1] = snake_body[i];
+            }
+            snake_body[0] = position;
+            for(var i = 0; i <= score; i++){
+                change_tile(snake_body[i], "snake");
+            }
+        }
+        function place_treat(){
+            var row = Math.floor(Math.random() * board_size[0]) + 1;
+            var col = Math.floor(Math.random() * board_size[1]) + 1;
+            change_tile([row, col], "treat");
+        }
+        function change_position(position){
+            if(position[0] > 0 && position[0] < (board_size[0] + 1) && position[1] > 0 && position[1] < (board_size[1] + 1)){
+                let tile = document.querySelector("#r"+position[1]).querySelector("#t"+position[0]);
+                check_tile(position, tile);
+            }
+            else {
+                game_ended();
+            }
+        }
+        function check_tile(position, tile){
+            if(tile.classList.contains("treat")){
+                score = score + 1;
+                tile.classList.remove("treat");
+            }
+            if(tile.classList.contains("snake")){
+                game_ended();
+            }
+            tile.classList.add("snake");
+            move_snake_body(position);
+        }
+        function move_snake(direction){
+            if(direction == 1){
+                position[1] = position[1] - 1;
+                change_position(position);
+            }
+            if(direction == 2){
+                position[0] = position[0] + 1;
+                change_position(position);
+            }
+            if(direction == 3){
+                position[1] = position[1] + 1;
+                change_position(position);
+            }
+            if(direction == 4){
+                position[0] = position[0] - 1;
+                change_position(position);
+            }
+            console.log(position, direction);
+        }
+        function snake(){
+            move_snake(direction);
+        }
+        place_treat();
+        const game = setInterval(snake, speed*500);
+        });
+    </script>
+</head>
+<body>
+    <table class="board">
+        <tr id="r1">
+            <td id="t1"></td>
+            <td id="t2"></td>
+            <td id="t3"></td>
+            <td id="t4"></td>
+            <td id="t5"></td>
+        </tr>
+        <tr id="r2">
+            <td id="t1"></td>
+            <td id="t2"></td>
+            <td id="t3"></td>
+            <td id="t4"></td>
+            <td id="t5"></td>
+        </tr>
+        <tr id="r3">
+            <td id="t1"></td>
+            <td id="t2"></td>
+            <td id="t3" class="snake"></td>
+            <td id="t4"></td>
+            <td id="t5"></td>
+        </tr>
+        <tr id="r4">
+            <td id="t1"></td>
+            <td id="t2"></td>
+            <td id="t3"></td>
+            <td id="t4"></td>
+            <td id="t5"></td>
+        </tr>
+        <tr id="r5">
+            <td id="t1"></td>
+            <td id="t2"></td>
+            <td id="t3"></td>
+            <td id="t4"></td>
+            <td id="t5"></td>
+        </tr>
+    </table>
+</body>
+</html>
